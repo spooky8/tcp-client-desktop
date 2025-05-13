@@ -1,0 +1,22 @@
+{
+  "name": "tcp-client-desktop",
+  "productName": "TCP Chat Client",
+  "version": "1.0.0",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "build": "electron-builder"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "TCP Chat Client Desktop Application",
+  "dependencies": {
+    "electron-store": "^8.1.0",
+    "uuid": "^11.1.0"
+  },
+  "devDependencies": {
+    "electron": "^36.2.0",
+    "electron-builder": "^26.0.12"
+  }
+}

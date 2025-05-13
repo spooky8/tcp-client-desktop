@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>TCP Чат</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-container">
+    <!-- Навигация -->
+    <nav class="app-nav">
+      <div class="nav-logo">
+        <h1>TCP Чат</h1>
+      </div>
+      <div class="nav-links">
+        <button class="nav-link active" data-page="chat">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Чат
+        </button>
+        <button class="nav-link" data-page="settings">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+          Настройки
+        </button>
+        <button class="nav-link" data-page="about">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+          О программе
+        </button>
+      </div>
+      <div class="connection-status">
+        <span id="connectionStatus" class="status-indicator offline"></span>
+        <span id="statusText">Не подключен</span>
+      </div>
+    </nav>
+
+    <!-- Основная область контента -->
+    <main class="app-content">
+      <!-- Страница чата -->
+      <div class="page active" id="chatPage">
+        <div class="page-container">
+          <div class="sidebar">
+            <div class="sidebar-section">
+              <h2>Комната</h2>
+              <button id="createRoomBtn" class="btn btn-primary btn-block">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9h18v10a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9Z"></path><path d="M3 9V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v4"></path><path d="M12 12v5"></path><path d="M9 15h6"></path></svg>
+                Создать комнату
+              </button>
+              
+              <div class="input-group">
+                <label for="roomAddrInput">Адрес комнаты</label>
+                <div class="input-with-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><line x1="3" x2="21" y1="9" y2="9"></line><line x1="9" x2="9" y1="21" y2="9"></line></svg>
+                  <input id="roomAddrInput" type="text" placeholder="хост:порт">
+                </div>
+              </div>
+              
+              <div class="button-group">
+                <button id="connectRoomBtn" class="btn btn-secondary">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"></path><path d="m12 5 7 7-7 7"></path></svg>
+                  Подключиться
+                </button>
+                <button id="disconnectBtn" class="btn btn-danger" disabled>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                  Отключиться
+                </button>
+              </div>
+            </div>
+            
+            <div id="status" class="status-message"></div>
+          </div>
+          
+          <div class="chat-area">
+            <!-- Добавление кнопки очистки истории сообщений в чат -->
+            <div class="chat-header">
+              <div class="chat-header-left">
+                <h2>Сообщения</h2>
+              </div>
+              <div class="chat-header-right">
+                <div id="roomInfo" class="room-info"></div>
+                <button id="clearHistoryBtn" class="btn btn-sm btn-secondary" title="Очистить историю">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+                </button>
+              </div>
+            </div>
+            
+            <div id="messageLog" class="message-container">
+              <!-- Сообщения будут добавлены здесь -->
+            </div>
+            
+            <div class="message-input-container">
+              <div class="input-with-button">
+                <input id="messageInput" type="text" placeholder="Введите сообщение..." disabled>
+                <button id="sendMessageBtn" class="btn btn-send" disabled>
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Страница настроек -->
+      <div class="page" id="settingsPage">
+        <div class="page-container">
+          <div class="settings-card">
+            <h2>Настройки сети</h2>
+            <p class="settings-description">Настройте подключение к серверу и параметры прослушивания.</p>
+            
+            <div class="settings-form">
+              <div class="input-group">
+                <label for="serverHostInput">Хост сервера</label>
+                <div class="input-with-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><rect x="2" y="2" width="20" height="8" rx="2" ry="2"></rect><rect x="2" y="14" width="20" height="8" rx="2" ry="2"></rect><line x1="6" y1="6" x2="6.01" y2="6"></line><line x1="6" y1="18" x2="6.01" y2="18"></line></svg>
+                  <input id="serverHostInput" type="text" placeholder="IP-адрес сервера">
+                </div>
+              </div>
+              
+              <div class="input-group">
+                <label for="serverPortInput">Порт сервера</label>
+                <div class="input-with-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"></path><path d="M18 14h-8"></path><path d="M15 18h-5"></path><path d="M10 6h8v4h-8V6Z"></path></svg>
+                  <input id="serverPortInput" type="number" placeholder="Порт сервера">
+                </div>
+              </div>
+              
+              <div class="input-group">
+                <label for="listenHostInput">IP-адрес для прослушивания</label>
+                <div class="input-with-icon">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="input-icon"><path d="M20 12V8H6a2 2 0 0 1-2-2c0-1.1.9-2 2-2h12v4"></path><path d="M4 6v12c0 1.1.9 2 2 2h14v-4"></path><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"></path></svg>
+                  <input id="listenHostInput" type="text" placeholder="IP-адрес для прослушивания">
+                </div>
+                <div class="input-help">
+                  Укажите IP-адрес вашего компьютера в локальной сети. Не используйте 127.0.0.1
+                </div>
+                <button id="detectNetworkBtn" class="btn btn-secondary btn-sm">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4Z"></path><path d="M22 2 11 13"></path></svg>
+                  Определить автоматически
+                </button>
+              </div>
+              
+              <div class="settings-actions">
+                <button id="saveSettingsBtn" class="btn btn-primary">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path><polyline points="17 21 17 13 7 13 7 21"></polyline><polyline points="7 3 7 8 15 8"></polyline></svg>
+                  Сохранить настройки
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Страница "О программе" -->
+      <div class="page" id="aboutPage">
+        <div class="page-container">
+          <div class="about-card">
+            <h2>О программе TCP Чат</h2>
+            <p>TCP Чат - это простое приложение для обмена сообщениями, построенное на Electron и TCP-сокетах Node.js.</p>
+            
+            <div class="about-section">
+              <h3>Как это работает</h3>
+              <p>Это приложение использует TCP-сокеты для создания и подключения к чат-комнатам. Каждый клиент может создать комнату или подключиться к существующей, указав адрес комнаты.</p>
+            </div>
+            
+            <div class="about-section">
+              <h3>Возможности</h3>
+              <ul>
+                <li>Создание чат-комнат</li>
+                <li>Подключение к существующим комнатам</li>
+                <li>Отправка и получение сообщений в реальном времени</li>
+                <li>Настраиваемые параметры сети</li>
+                <li>Удобный интерфейс</li>
+              </ul>
+            </div>
+            
+            <div class="about-section">
+              <h3>Версия</h3>
+              <p>1.0.0</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+  <script src="renderer.js"></script>
+</body>
+</html>
