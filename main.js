@@ -23,7 +23,7 @@ function createWindow() {
 
   win.loadFile("index.html")
 
-  // Раскомментируйте, чтобы автоматически открывать DevTools
+  // Автоматически открывать DevTools
   // win.webContents.openDevTools();
 }
 

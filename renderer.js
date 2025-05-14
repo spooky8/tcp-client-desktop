@@ -40,7 +40,8 @@ class TCPClient {
   // Получение IP-адреса основного сетевого интерфейса
   getDefaultNetworkInterface() {
     const interfaces = os.networkInterfaces()
-    let defaultIP = "127.0.0.1" // По умолчанию localhost
+    // По умолчанию localhost
+    let defaultIP = "127.0.0.1"
 
     // Перебираем все сетевые интерфейсы
     for (const name in interfaces) {
@@ -404,7 +405,8 @@ class TCPClient {
           if (message.type === "send") {
             const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
             const senderName = `User@${message.addr}`
-            this.appendMessage(message.message, "user", senderName, time, false) // Добавлен параметр isSelf = false
+            // Добавлен параметр isSelf = false
+            this.appendMessage(message.message, "user", senderName, time, false)
 
             // Отправляем подтверждение получения
             const response = { type: "ok" }
@@ -450,8 +452,6 @@ class TCPClient {
     this.statusText.textContent = "Создание комнаты..."
 
     try {
-      // По документации, для создания комнаты нужен только тип запроса
-      // Но судя по логам, сервер ожидает ID
       const request = {
         type: "create",
         id: this.clientId,
@@ -491,7 +491,6 @@ class TCPClient {
     console.log(`Попытка подключения к комнате по адресу ${addr}`)
 
     try {
-      // По документации и логам, для подключения к комнате нужно отправить ID и адрес для прослушивания
       const connectRequest = {
         type: "connect",
         id: this.clientId,
@@ -523,7 +522,7 @@ class TCPClient {
     }
   }
 
-  // Изменение метода sendMessage для отображения своих сообщений справа и другого цвета
+  // Функция для отправки сообщений
   async sendMessage(message) {
     if (!this.connected) {
       this.updateStatus("Не подключено ни к одной комнате", "error")
@@ -533,8 +532,7 @@ class TCPClient {
     if (!message.trim()) return
 
     try {
-      // По документации, для отправки сообщения нужны поля type, msg и date
-      // Добавляем ID, так как сервер, похоже, его ожидает
+      // Отправляем сообщение на сервер
       const request = {
         type: "send",
         id: this.clientId,
@@ -549,7 +547,8 @@ class TCPClient {
         // Отображаем сообщение после успешной отправки
         const time = new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
         const myAddr = `${this.getLocalAddress()}:${this.listenerPort}`
-        this.appendMessage(message.trim(), "user", `User@${myAddr}`, time, true) // Добавлен параметр isSelf = true
+        // Добавлен параметр isSelf = true
+        this.appendMessage(message.trim(), "user", `User@${myAddr}`, time, true)
         this.messageInput.value = ""
       } else {
         throw new Error(response.status || response.type || "Сообщение не доставлено")
@@ -566,8 +565,7 @@ class TCPClient {
     }
 
     try {
-      // По документации, для отключения от комнаты нужен только тип запроса
-      // Добавляем ID, так как сервер, похоже, его ожидает
+      // Отправляем запрос на отключение от комнаты
       const request = {
         type: "disconnect",
         id: this.clientId,
@@ -600,7 +598,8 @@ class TCPClient {
     try {
       // Создаем аудио элемент и воспроизводим звук уведомления
       const audio = new Audio()
-      audio.src = "data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..." // Здесь будет base64 звука
+      // Здесь будет base64 звука
+      audio.src = "data:audio/wav;base64,UklGRl9vT19XQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YU..."
       audio.volume = 0.5
       audio.play().catch((err) => console.log("Не удалось воспроизвести звук уведомления:", err))
     } catch (error) {
